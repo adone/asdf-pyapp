@@ -138,12 +138,16 @@ get_package_versions() {
   local pip_install_args=()
   local version_output_raw
 
-  # we rely on the "legacy resolver" to get versions, which was introduced in 20.3
-  if [ "${pip_version_major}" -ge 21 ] ||
-    { [ "${pip_version_major}" -eq 20 ] && [ "${pip_version_minor}" -ge 3 ]; }; then
-    pip_install_args+=("--use-deprecated=legacy-resolver")
+  if [ "${pip_version_major}" -ge 24 ]; then
+    version_output_raw=$("${ASDF_PYAPP_RESOLVED_PYTHON_PATH}" -m pip index versions "${package}" 2>&1) || true
+  else
+    # we rely on the "legacy resolver" to get versions, which was introduced in 20.3
+    if [ "${pip_version_major}" -ge 21 ] ||
+      { [ "${pip_version_major}" -eq 20 ] && [ "${pip_version_minor}" -ge 3 ]; }; then
+      pip_install_args+=("--use-deprecated=legacy-resolver")
+    fi
+    version_output_raw=$("${ASDF_PYAPP_RESOLVED_PYTHON_PATH}" -m pip install ${pip_install_args[@]+"${pip_install_args[@]}"} "${package}==" 2>&1) || true
   fi
-  version_output_raw=$("${ASDF_PYAPP_RESOLVED_PYTHON_PATH}" -m pip install ${pip_install_args[@]+"${pip_install_args[@]}"} "${package}==" 2>&1) || true
 
   local regex='.*from versions:(.*)\)'
   if [[ $version_output_raw =~ $regex ]]; then
