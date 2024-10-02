@@ -388,7 +388,7 @@ setup_direnv() {
 
 @test "check ASDF_PYAPP_INCLUDE_DEPS=0 doesn't install executables of dependencies" {
 
-  in_container asdf global python 3.8.10
+  in_container asdf global python 3.12.7
 
   in_container eval "ASDF_PYAPP_INCLUDE_DEPS=0 asdf plugin add ansible /root/asdf-pyapp"
   in_container asdf install ansible latest
@@ -400,7 +400,7 @@ setup_direnv() {
 
 @test "check ASDF_PYAPP_INCLUDE_DEPS=1 installs executables of dependencies" {
 
-  in_container asdf global python 3.8.10
+  in_container asdf global python 3.12.7
 
   in_container eval "ASDF_PYAPP_INCLUDE_DEPS=1 asdf plugin add ansible /root/asdf-pyapp"
   in_container asdf install ansible latest
