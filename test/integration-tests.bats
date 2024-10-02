@@ -217,6 +217,24 @@ teardown() {
   refute_output --partial "asdf-pyapp: [ERROR]"
 }
 
+@test "check latest with pip version 24.2" {
+
+  local pip_version=24.2
+
+  in_container asdf global python 3.12.7
+
+  in_container python3 -m pip install --upgrade pip=="$pip_version"
+
+  run in_container python3 -m pip --version
+  assert_output --partial "$pip_version"
+
+  in_container asdf plugin add cowsay /root/asdf-pyapp
+  run in_container eval "ASDF_PYAPP_DEBUG=1 asdf list all cowsay"
+  # TODO: "asdf list all" seems to mask return codes. It exits 0 even if we
+  # exit nonzero in our function. So just check output for errors for now...
+  refute_output --partial "asdf-pyapp: [ERROR]"
+}
+
 @test "check \$ASDF_PYAPP_DEFAULT_PYTHON_PATH works" {
   # When an app is installed without a python version specified,
   # the asdf-pyapp defaults to python3 in our $PATH, which is the
