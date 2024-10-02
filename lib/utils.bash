@@ -137,9 +137,11 @@ get_package_versions() {
 
   local pip_install_args=()
   local version_output_raw
+  local regex
 
   if [ "${pip_version_major}" -ge 24 ]; then
     version_output_raw=$("${ASDF_PYAPP_RESOLVED_PYTHON_PATH}" -m pip index versions "${package}" 2>&1) || true
+    regex='.*Available versions:(.*)'
   else
     # we rely on the "legacy resolver" to get versions, which was introduced in 20.3
     if [ "${pip_version_major}" -ge 21 ] ||
@@ -147,9 +149,9 @@ get_package_versions() {
       pip_install_args+=("--use-deprecated=legacy-resolver")
     fi
     version_output_raw=$("${ASDF_PYAPP_RESOLVED_PYTHON_PATH}" -m pip install ${pip_install_args[@]+"${pip_install_args[@]}"} "${package}==" 2>&1) || true
+    regex='.*from versions:(.*)\)'
   fi
 
-  local regex='.*from versions:(.*)\)'
   if [[ $version_output_raw =~ $regex ]]; then
     local version_substring="${BASH_REMATCH[1]//','/}"
     # trim whitespace with 'xargs echo' and convert spaces to newlines with 'tr'
