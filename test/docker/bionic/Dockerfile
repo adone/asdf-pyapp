@@ -43,6 +43,7 @@ RUN echo ". $HOME/.asdf/asdf.sh" >> ~/.profile
 RUN source /root/.asdf/asdf.sh && asdf plugin add python
 RUN source /root/.asdf/asdf.sh && asdf install python 3.5.10
 RUN source /root/.asdf/asdf.sh && asdf install python 3.8.10
+RUN source /root/.asdf/asdf.sh && asdf install python 3.12.7
 
 RUN source /root/.asdf/asdf.sh && asdf plugin add direnv
 RUN source /root/.asdf/asdf.sh && asdf install direnv 2.28.0
